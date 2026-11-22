@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.key
+credentials.json
+service-account*.json
+
+# Build and runtime output
+dist/
+build/
+out/
+.next/
+.expo/
+.expo-shared/
+.turbo/
+coverage/
+*.tsbuildinfo
+web-build/
+android/
+ios/
+
+# Logs and caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.eslintcache
+.cache/
+*.log
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Test / tooling
+.nyc_output/
+playwright-report/
+test-results/
+
+# Supabase local
+supabase/.temp/
+supabase/.branches/
+
+# Expo
+expo-env.d.ts
+*.jks
+*.p8
+*.p12
+*.mobileprovision

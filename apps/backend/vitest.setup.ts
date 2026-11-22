@@ -1,0 +1,12 @@
+process.env.SUPABASE_URL = 'http://127.0.0.1:54321';
+process.env.SUPABASE_ANON_KEY = 'test-anon-key';
+process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+process.env.OPENAI_API_KEY = 'test-openrouter-key';
+process.env.OPENAI_BASE_URL = 'https://openrouter.ai/api/v1';
+process.env.OPENAI_MODEL = 'google/gemini-2.5-flash';
+process.env.OPENROUTER_APP_URL = 'http://localhost:5000';
+process.env.OPENROUTER_APP_NAME = 'Smart Property Evaluator';
+process.env.PORT = '5000';
+process.env.NODE_ENV = 'test';
+process.env.CORS_ORIGIN = 'http://localhost:3000';
+process.env.JWT_AUDIENCE = 'authenticated';

@@ -1,0 +1,13 @@
+{
+  "name": "smart-property-evaluator",
+  "private": true,
+  "description": "AI-assisted property evaluation platform: Expo mobile app, Next.js admin dashboard, and Express API.",
+  "scripts": {
+    "dev:backend": "npm --prefix apps/backend run dev",
+    "dev:admin": "npm --prefix apps/admin run dev",
+    "dev:mobile": "npm --prefix apps/mobile run start",
+    "typecheck": "npm --prefix apps/backend run typecheck && npm --prefix apps/admin run typecheck && npm --prefix apps/mobile run typecheck",
+    "test": "npm --prefix apps/backend run test && npm --prefix apps/admin run test && npm --prefix apps/mobile run test",
+    "lint": "npm --prefix apps/backend run lint && npm --prefix apps/admin run lint && npm --prefix apps/mobile run lint"
+  }
+}
