@@ -25,6 +25,7 @@ export default function RootLayout() {
     DMSans_700Bold,
     Fraunces_600SemiBold,
     Fraunces_700Bold,
+    ...MaterialCommunityIcons.font,
   });
 
   useEffect(() => {
