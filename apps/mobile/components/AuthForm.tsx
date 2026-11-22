@@ -1,9 +1,9 @@
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, HelperText, TextInput } from 'react-native-paper';
+import { HelperText, TextInput } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import type { ZodTypeAny } from 'zod';
-import { palette } from '@/lib/theme';
+import { PrimaryButton } from '@/components/PrimaryButton';
 
 export function Field({
   label,
@@ -11,6 +11,7 @@ export function Field({
   onChange,
   onBlur,
   error,
+  hint,
   secure = false,
   keyboard = 'default' as 'default' | 'email-address' | 'numeric' | 'phone-pad',
 }: {
@@ -19,6 +20,7 @@ export function Field({
   onChange: (value: string) => void;
   onBlur?: () => void;
   error?: string;
+  hint?: string;
   secure?: boolean;
   keyboard?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
 }) {
@@ -32,10 +34,12 @@ export function Field({
         onBlur={onBlur}
         secureTextEntry={secure}
         keyboardType={keyboard}
-        autoCapitalize={keyboard === 'email-address' ? 'none' : 'sentences'}
+        autoCapitalize={keyboard === 'email-address' || keyboard === 'numeric' ? 'none' : 'sentences'}
+        autoCorrect={false}
         error={Boolean(error)}
       />
       {error ? <HelperText type="error">{error}</HelperText> : null}
+      {!error && hint ? <HelperText type="info">{hint}</HelperText> : null}
     </View>
   );
 }
@@ -56,6 +60,7 @@ export function AuthForm({
     label: string;
     secure?: boolean;
     keyboard?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+    hint?: string;
   }>;
 }) {
   const form = useForm({
@@ -77,28 +82,24 @@ export function AuthForm({
               onChange={control.onChange}
               onBlur={control.onBlur}
               error={fieldState.error?.message}
+              hint={field.hint}
               secure={field.secure}
               keyboard={field.keyboard}
             />
           )}
         />
       ))}
-      <Button
-        mode="contained"
+      <PrimaryButton
+        label={form.formState.isSubmitting ? `${submitLabel}` : submitLabel}
         loading={form.formState.isSubmitting}
-        disabled={form.formState.isSubmitting}
         onPress={() => {
           void form.handleSubmit((values) => onSubmit(values as never))();
         }}
-        style={styles.button}
-      >
-        {submitLabel}
-      </Button>
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  form: { gap: 4 },
-  button: { marginTop: 8, borderRadius: 12, backgroundColor: palette.navy },
+  form: { gap: 8 },
 });

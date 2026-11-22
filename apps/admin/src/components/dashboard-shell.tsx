@@ -4,7 +4,15 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { BarChart3, ClipboardList, LayoutDashboard, LogOut, UserRound, Users } from 'lucide-react';
+import {
+  BarChart3,
+  ClipboardList,
+  LayoutDashboard,
+  LogOut,
+  MapPinned,
+  UserRound,
+  Users,
+} from 'lucide-react';
 import { apiGet, getErrorMessage } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/types';
@@ -14,6 +22,7 @@ const links = [
   { href: '/', label: 'Overview', icon: LayoutDashboard },
   { href: '/users', label: 'Users', icon: Users },
   { href: '/evaluations', label: 'Evaluations', icon: ClipboardList },
+  { href: '/comparables', label: 'Comparables', icon: MapPinned },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/profile', label: 'Profile', icon: UserRound },
 ];

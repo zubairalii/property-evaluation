@@ -28,7 +28,12 @@ const optionalCount = z
 export const createEvaluationSchema = z.object({
   property_title: optionalText,
   property_type: z.enum(propertyTypes),
-  country: z.string().trim().min(2).max(80),
+  country: z
+    .string()
+    .trim()
+    .max(80)
+    .optional()
+    .transform((value) => (value && value.length >= 2 ? value : 'Pakistan')),
   city: z.string().trim().min(2).max(80),
   location: z.string().trim().min(2).max(120),
   property_size: z.number().positive().max(1_000_000_000),

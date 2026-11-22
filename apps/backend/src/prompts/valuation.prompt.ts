@@ -32,6 +32,7 @@ export interface ValuationPromptInput {
   market: {
     market_data_available: boolean;
     comparable_count: number;
+    match_scope: 'location' | 'nearby' | 'city' | 'city_any_unit' | 'none';
     summary: {
       min_sale_price: number;
       max_sale_price: number;

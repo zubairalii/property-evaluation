@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { Button, SegmentedButtons, Text } from 'react-native-paper';
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
+import { useLayoutEffect, useState } from 'react';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { SegmentedButtons, Text } from 'react-native-paper';
 import { EvaluationResultView } from '@/components/EvaluationResultView';
-import { Screen } from '@/components/Screen';
+import { PrimaryButton } from '@/components/PrimaryButton';
+import { Screen, ScreenHeader } from '@/components/Screen';
 import { api, getErrorMessage } from '@/lib/api';
 import {
   areaUnitOptions,
@@ -16,12 +17,13 @@ import {
   propertyTypeOptions,
   statusLabels,
 } from '@/lib/labels';
-import { palette } from '@/lib/theme';
+import { fonts, palette, spacing } from '@/lib/theme';
 import type { ApiEnvelope, EvaluationView } from '@/lib/types';
 
 export default function EvaluationDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const navigation = useNavigation();
   const client = useQueryClient();
   const [section, setSection] = useState<'valuation' | 'investment'>('valuation');
   const query = useQuery({
@@ -42,17 +44,34 @@ export default function EvaluationDetailScreen() {
     },
   });
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <Pressable
+          onPress={() => {
+            if (router.canGoBack()) router.back();
+            else router.replace('/(app)/(tabs)/home');
+          }}
+          style={styles.backHit}
+        >
+          <Text style={styles.backLabel}>← Back</Text>
+        </Pressable>
+      ),
+    });
+  }, [navigation, router]);
+
   if (query.isLoading) {
     return (
       <Screen>
-        <Text>Loading evaluation…</Text>
+        <Text style={styles.meta}>Loading evaluation…</Text>
       </Screen>
     );
   }
   if (query.isError || !query.data) {
     return (
       <Screen>
-        <Text style={styles.error}>{getErrorMessage(query.error)}</Text>
+        <ScreenHeader title="Unable to open evaluation" subtitle={getErrorMessage(query.error)} />
+        <PrimaryButton label="Back to history" onPress={() => router.replace('/(app)/(tabs)/history')} />
       </Screen>
     );
   }
@@ -60,53 +79,82 @@ export default function EvaluationDetailScreen() {
   const { evaluation } = query.data;
   return (
     <Screen>
-      <Text style={styles.title}>{propertyHeading(evaluation.property_title, evaluation.property_type, evaluation.city)}</Text>
-      <Text style={styles.meta}>
-        {formatDate(evaluation.created_at)} · {statusLabels[evaluation.status]}
-      </Text>
+      <ScreenHeader
+        eyebrow={statusLabels[evaluation.status]}
+        title={propertyHeading(evaluation.property_title, evaluation.property_type, evaluation.city)}
+        subtitle={`${formatDate(evaluation.created_at)} · Asking ${formatMoney(evaluation.asking_price, evaluation.currency)}`}
+      />
+
       <View style={styles.facts}>
         <Text style={styles.fact}>
-          {labelFor(propertyTypeOptions, evaluation.property_type)} · {evaluation.location}, {evaluation.city}, {evaluation.country}
+          {labelFor(propertyTypeOptions, evaluation.property_type)} · {evaluation.location}, {evaluation.city}
         </Text>
         <Text style={styles.fact}>
-          {evaluation.property_size} {labelFor(areaUnitOptions, evaluation.area_unit)} · {labelFor(conditionOptions, evaluation.property_condition)}
+          {evaluation.property_size} {labelFor(areaUnitOptions, evaluation.area_unit)} ·{' '}
+          {labelFor(conditionOptions, evaluation.property_condition)}
         </Text>
-        <Text style={styles.fact}>Asking {formatMoney(evaluation.asking_price, evaluation.currency)}</Text>
-        {evaluation.bedrooms != null ? <Text style={styles.fact}>{evaluation.bedrooms} bedrooms</Text> : null}
-        {evaluation.bathrooms != null ? <Text style={styles.fact}>{evaluation.bathrooms} bathrooms</Text> : null}
+        {evaluation.bedrooms != null || evaluation.bathrooms != null ? (
+          <Text style={styles.fact}>
+            {evaluation.bedrooms != null ? `${evaluation.bedrooms} beds` : 'Beds n/a'}
+            {' · '}
+            {evaluation.bathrooms != null ? `${evaluation.bathrooms} baths` : 'Baths n/a'}
+          </Text>
+        ) : null}
       </View>
+
       {evaluation.status === 'completed' ? (
         <SegmentedButtons
           value={section}
           onValueChange={(value) => setSection(value as 'valuation' | 'investment')}
+          style={styles.segments}
           buttons={[
             { value: 'valuation', label: 'Valuation' },
             { value: 'investment', label: 'Investment' },
           ]}
         />
       ) : null}
+
       <EvaluationResultView view={query.data} section={section} />
-      {remove.isError ? <Text style={styles.error}>{getErrorMessage(remove.error)}</Text> : null}
-      <Button
-        mode="text"
-        textColor={palette.danger}
-        onPress={() =>
-          Alert.alert('Delete evaluation', 'This removes the property and its valuation from your account.', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', style: 'destructive', onPress: () => remove.mutate() },
-          ])
-        }
-      >
-        Delete evaluation
-      </Button>
+
+      <View style={styles.actions}>
+        <PrimaryButton label="Done" onPress={() => router.replace('/(app)/(tabs)/home')} />
+        <PrimaryButton
+          label="Evaluate another"
+          mode="outlined"
+          onPress={() => router.replace('/(app)/(tabs)/evaluate')}
+        />
+        {remove.isError ? <Text style={styles.error}>{getErrorMessage(remove.error)}</Text> : null}
+        <PrimaryButton
+          label="Delete evaluation"
+          mode="text"
+          tone="danger"
+          loading={remove.isPending}
+          onPress={() =>
+            Alert.alert('Delete evaluation', 'This removes the property and its valuation from your account.', [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Delete', style: 'destructive', onPress: () => remove.mutate() },
+            ])
+          }
+        />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { color: palette.navy, fontSize: 26, fontWeight: '800' },
-  meta: { color: palette.muted },
-  facts: { gap: 4 },
-  fact: { color: '#0F172A', lineHeight: 22 },
-  error: { color: palette.danger },
+  backHit: { paddingHorizontal: 4, paddingVertical: 8 },
+  backLabel: { color: palette.navy, fontFamily: fonts.bodyBold, fontSize: 16 },
+  facts: {
+    gap: 6,
+    padding: spacing.md,
+    borderRadius: 18,
+    backgroundColor: palette.card,
+    borderWidth: 1,
+    borderColor: palette.line,
+  },
+  fact: { color: palette.ink, fontFamily: fonts.bodyMedium, lineHeight: 22 },
+  meta: { color: palette.muted, fontFamily: fonts.body },
+  segments: { backgroundColor: palette.mist, borderRadius: 14 },
+  actions: { gap: 10, marginTop: spacing.md },
+  error: { color: palette.danger, fontFamily: fonts.bodyMedium },
 });

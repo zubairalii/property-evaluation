@@ -75,6 +75,7 @@ async function saveResult(
   valuation: AiValuation,
   comparables: MarketComparable[],
   latencyMs: number,
+  matchScope: string,
 ): Promise<EvaluationResult> {
   const existing = await readResult(evaluation.id);
   if (existing) return existing;
@@ -102,6 +103,7 @@ async function saveResult(
         latency_ms: latencyMs,
         comparable_count: comparables.length,
         comparable_ids: comparables.map((row) => row.id),
+        match_scope: matchScope,
       },
     })
     .select('*')
@@ -136,14 +138,15 @@ export async function analyzeEvaluation(userId: string, evaluationId: string): P
   const started = Date.now();
 
   try {
-    const comparables = await marketDataProvider.findComparables({
+    const { comparables, match_scope } = await marketDataProvider.findComparables({
       property_type: evaluation.property_type,
       country: evaluation.country,
       city: evaluation.city,
+      location: evaluation.location,
       area_unit: evaluation.area_unit,
       currency: evaluation.currency,
     });
-    const market = summarizeComparables(comparables);
+    const market = summarizeComparables(comparables, match_scope);
     const raw = await generateValuation({
       property: {
         property_title: evaluation.property_title,
@@ -163,7 +166,7 @@ export async function analyzeEvaluation(userId: string, evaluationId: string): P
       market,
     });
     const guarded = applyMarketDataPolicy(aiResponseSchema.parse(raw), comparables.length, evaluation.asking_price);
-    const saved = await saveResult(evaluation, guarded, comparables, Date.now() - started);
+    const saved = await saveResult(evaluation, guarded, comparables, Date.now() - started, match_scope);
     const completed = await updateEvaluationStatus(evaluation.id, 'completed', null);
     return toEvaluationView(completed, saved);
   } catch (error) {

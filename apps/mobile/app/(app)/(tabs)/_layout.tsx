@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { palette } from '@/lib/theme';
+import { fonts, palette } from '@/lib/theme';
 
 export default function TabLayout() {
   return (
@@ -8,10 +8,18 @@ export default function TabLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: palette.background },
         headerTintColor: palette.navy,
+        headerTitleStyle: { fontFamily: fonts.bodyBold, fontSize: 17 },
         headerShadowVisible: false,
-        tabBarActiveTintColor: palette.blue,
+        tabBarActiveTintColor: palette.teal,
         tabBarInactiveTintColor: palette.muted,
-        tabBarStyle: { backgroundColor: '#fff', borderTopColor: palette.line },
+        tabBarLabelStyle: { fontFamily: fonts.bodyMedium, fontSize: 11 },
+        tabBarStyle: {
+          backgroundColor: palette.card,
+          borderTopColor: palette.line,
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 6,
+        },
       }}
     >
       <Tabs.Screen

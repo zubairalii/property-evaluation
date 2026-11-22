@@ -59,3 +59,7 @@ expo-env.d.ts
 *.p8
 *.p12
 *.mobileprovision
+
+# Large local market dumps
+zameen-updated.csv
+*.csv

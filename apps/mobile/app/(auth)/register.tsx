@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { AuthForm } from '@/components/AuthForm';
-import { Screen } from '@/components/Screen';
+import { Screen, ScreenHeader } from '@/components/Screen';
 import { supabase } from '@/lib/supabase';
-import { palette } from '@/lib/theme';
+import { fonts, palette } from '@/lib/theme';
 import { registerSchema, type RegisterValues } from '@/lib/validation/auth';
 
 export default function RegisterScreen() {
@@ -29,8 +29,11 @@ export default function RegisterScreen() {
 
   return (
     <Screen>
-      <Text style={styles.title}>Create your account</Text>
-      <Text style={styles.copy}>Use the same account to view evaluations on this device.</Text>
+      <ScreenHeader
+        eyebrow="Get started"
+        title="Create your account"
+        subtitle="Use the same account to view evaluations on this device."
+      />
       {message ? <Text style={styles.note}>{message}</Text> : null}
       <AuthForm
         schema={registerSchema}
@@ -40,7 +43,12 @@ export default function RegisterScreen() {
         fields={[
           { name: 'full_name', label: 'Full name' },
           { name: 'email', label: 'Email', keyboard: 'email-address' },
-          { name: 'password', label: 'Password', secure: true },
+          {
+            name: 'password',
+            label: 'Password',
+            secure: true,
+            hint: '8+ characters with upper, lower, number, and a special character.',
+          },
           { name: 'confirm_password', label: 'Confirm password', secure: true },
         ]}
       />
@@ -52,8 +60,6 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { color: palette.navy, fontSize: 32, fontWeight: '800' },
-  copy: { color: palette.muted, lineHeight: 22 },
-  note: { color: palette.navy },
-  link: { color: palette.blue, fontWeight: '600', marginTop: 12 },
+  note: { color: palette.navy, fontFamily: fonts.bodyMedium, lineHeight: 21 },
+  link: { color: palette.teal, fontFamily: fonts.bodyBold, marginTop: 8 },
 });

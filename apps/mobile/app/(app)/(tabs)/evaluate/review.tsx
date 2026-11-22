@@ -1,8 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { Button, Card, Text } from 'react-native-paper';
-import { Screen } from '@/components/Screen';
+import { Text } from 'react-native-paper';
+import { PrimaryButton } from '@/components/PrimaryButton';
+import { Screen, ScreenHeader } from '@/components/Screen';
 import { useDraft } from '@/context/draft';
 import { api, getErrorMessage } from '@/lib/api';
 import { queryClient } from '@/lib/query-client';
@@ -13,7 +14,7 @@ import {
   labelFor,
   propertyTypeOptions,
 } from '@/lib/labels';
-import { palette } from '@/lib/theme';
+import { fonts, palette, spacing } from '@/lib/theme';
 import type { ApiEnvelope, Evaluation } from '@/lib/types';
 import { toPropertyPayload } from '@/lib/validation/property';
 
@@ -44,38 +45,58 @@ export default function ReviewScreen() {
 
   return (
     <Screen>
-      <Text style={styles.intro}>Confirm these details before the valuation is generated.</Text>
-      <Card style={styles.card}>
-        <Card.Content style={styles.rows}>
-          <Row label="Title" value={payload.property_title ?? 'Not provided'} />
-          <Row label="Type" value={labelFor(propertyTypeOptions, payload.property_type)} />
-          <Row label="Location" value={`${payload.location}, ${payload.city}, ${payload.country}`} />
-          <Row label="Size" value={`${payload.property_size} ${labelFor(areaUnitOptions, payload.area_unit)}`} />
-          <Row label="Covered area" value={payload.covered_area == null ? 'Not provided' : String(payload.covered_area)} />
-          <Row label="Bedrooms" value={payload.bedrooms == null ? 'Not provided' : String(payload.bedrooms)} />
-          <Row label="Bathrooms" value={payload.bathrooms == null ? 'Not provided' : String(payload.bathrooms)} />
-          <Row label="Condition" value={labelFor(conditionOptions, payload.property_condition)} />
-          <Row label="Asking price" value={formatMoney(payload.asking_price, payload.currency)} />
-        </Card.Content>
-      </Card>
+      <ScreenHeader
+        eyebrow="Review"
+        title="Confirm property details"
+        subtitle="Double-check the summary before we generate your valuation."
+      />
+      <View style={styles.card}>
+        <Row label="Title" value={payload.property_title ?? 'Not provided'} />
+        <Row label="Type" value={labelFor(propertyTypeOptions, payload.property_type)} />
+        <Row label="Location" value={`${payload.location}, ${payload.city}`} />
+        <Row label="Size" value={`${payload.property_size} ${labelFor(areaUnitOptions, payload.area_unit)}`} />
+        <Row label="Covered area" value={payload.covered_area == null ? 'Not provided' : String(payload.covered_area)} />
+        <Row label="Bedrooms" value={payload.bedrooms == null ? 'Not provided' : String(payload.bedrooms)} />
+        <Row label="Bathrooms" value={payload.bathrooms == null ? 'Not provided' : String(payload.bathrooms)} />
+        <Row label="Condition" value={labelFor(conditionOptions, payload.property_condition)} />
+        <Row label="Asking price" value={formatMoney(payload.asking_price, payload.currency)} />
+      </View>
       {mutation.isError ? <Text style={styles.error}>{getErrorMessage(mutation.error)}</Text> : null}
-      <Button mode="contained" loading={mutation.isPending} disabled={mutation.isPending} style={styles.button} onPress={() => mutation.mutate()}>
-        Generate evaluation
-      </Button>
-      <Button mode="outlined" onPress={() => router.back()}>
-        Edit details
-      </Button>
+      <View style={styles.actions}>
+        <PrimaryButton
+          label={mutation.isPending ? 'Generating' : 'Generate evaluation'}
+          loading={mutation.isPending}
+          onPress={() => mutation.mutate()}
+        />
+        <PrimaryButton label="Edit details" mode="outlined" disabled={mutation.isPending} onPress={() => router.back()} />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  intro: { color: palette.muted, lineHeight: 22 },
-  card: { borderRadius: 16, backgroundColor: '#fff' },
-  rows: { gap: 10 },
-  row: { gap: 2 },
-  label: { color: palette.muted, fontSize: 12, fontWeight: '600' },
-  value: { color: palette.navy, fontSize: 16, fontWeight: '600' },
-  button: { borderRadius: 12, backgroundColor: palette.navy },
-  error: { color: palette.danger },
+  card: {
+    borderRadius: 22,
+    backgroundColor: palette.card,
+    borderWidth: 1,
+    borderColor: palette.line,
+    padding: spacing.lg,
+    gap: 14,
+  },
+  row: { gap: 4 },
+  label: {
+    color: palette.muted,
+    fontFamily: fonts.bodyBold,
+    fontSize: 11,
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
+  },
+  value: {
+    color: palette.navy,
+    fontFamily: fonts.bodyMedium,
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  actions: { gap: 10, marginTop: spacing.sm },
+  error: { color: palette.danger, fontFamily: fonts.bodyMedium, lineHeight: 20 },
 });

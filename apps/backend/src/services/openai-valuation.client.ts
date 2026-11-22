@@ -44,6 +44,8 @@ export async function generateValuation(input: ValuationPromptInput): Promise<un
       {
         model: env.OPENAI_MODEL,
         temperature: 0.2,
+        // Cap completion size so OpenRouter credit checks don't reject the default ceiling.
+        max_tokens: 4096,
         messages: [
           { role: 'system', content: VALUATION_SYSTEM_PROMPT },
           { role: 'user', content: buildValuationUserPrompt(input) },
@@ -76,6 +78,12 @@ export async function generateValuation(input: ValuationPromptInput): Promise<un
       (error instanceof Error && error.name === 'AbortError')
     ) {
       throw new HttpError(504, 'The valuation service timed out. Please try again.');
+    }
+    if (error instanceof OpenAI.APIError && error.status === 402) {
+      throw new HttpError(
+        502,
+        'OpenRouter rejected the request due to credit or token limits. Add credits or raise the key limit, then try again.',
+      );
     }
     logger.error({ err: error }, 'Valuation request failed');
     throw new HttpError(502, 'The valuation service is unavailable. Please try again.');

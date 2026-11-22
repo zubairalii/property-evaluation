@@ -5,6 +5,7 @@ import type {
   EvaluationResult,
   EvaluationSummary,
   InvestmentRecommendation,
+  AdminMarketComparable,
   MarketComparable,
   PriceStatus,
   Profile,
@@ -105,6 +106,11 @@ export const comparableRowSchema = z.object({
   source: z.string(),
 });
 
+export const adminComparableRowSchema = comparableRowSchema.extend({
+  verification_status: z.enum(['unverified', 'verified', 'rejected']),
+  created_at: z.string(),
+});
+
 type QueryError = { message: string; code?: string } | null;
 
 export function throwIfDbError(error: QueryError, publicMessage: string): void {
@@ -145,6 +151,10 @@ export function parseResult(row: unknown): EvaluationResult {
 
 export function parseComparable(row: unknown): MarketComparable {
   return comparableRowSchema.parse(row);
+}
+
+export function parseAdminComparable(row: unknown): AdminMarketComparable {
+  return adminComparableRowSchema.parse(row);
 }
 
 export function embeddedResult(value: unknown): EvaluationResult | null {

@@ -1,38 +1,43 @@
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { AuthForm } from '@/components/AuthForm';
-import { Screen } from '@/components/Screen';
+import { Screen, ScreenHeader } from '@/components/Screen';
 import { supabase } from '@/lib/supabase';
-import { palette } from '@/lib/theme';
+import { fonts, palette } from '@/lib/theme';
 import { forgotSchema, type ForgotValues } from '@/lib/validation/auth';
-import * as Linking from 'expo-linking';
 
 export default function ForgotPasswordScreen() {
+  const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
 
   async function onSubmit(values: ForgotValues) {
     setMessage(null);
-    const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
-      redirectTo: Linking.createURL('/reset-password'),
-    });
+    const email = values.email.trim().toLowerCase();
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
     if (error) {
       setMessage(error.message);
       return;
     }
-    setMessage('If an account exists for that email, a reset link is on its way.');
+    router.push({
+      pathname: '/(auth)/verify-recovery',
+      params: { email },
+    });
   }
 
   return (
     <Screen>
-      <Text style={styles.title}>Reset your password</Text>
-      <Text style={styles.copy}>We will email you a link that opens this app so you can choose a new password.</Text>
+      <ScreenHeader
+        eyebrow="Account recovery"
+        title="Reset your password"
+        subtitle="Enter your email and we’ll send a verification code you can use in the app."
+      />
       {message ? <Text style={styles.note}>{message}</Text> : null}
       <AuthForm
         schema={forgotSchema}
         defaults={{ email: '' }}
-        submitLabel="Send reset link"
+        submitLabel="Send verification code"
         onSubmit={onSubmit}
         fields={[{ name: 'email', label: 'Email', keyboard: 'email-address' }]}
       />
@@ -44,8 +49,6 @@ export default function ForgotPasswordScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { color: palette.navy, fontSize: 32, fontWeight: '800' },
-  copy: { color: palette.muted, lineHeight: 22 },
-  note: { color: palette.navy },
-  link: { color: palette.blue, fontWeight: '600', marginTop: 12 },
+  note: { color: palette.danger, fontFamily: fonts.bodyMedium, lineHeight: 21 },
+  link: { color: palette.teal, fontFamily: fonts.bodyBold, marginTop: 8 },
 });

@@ -10,10 +10,15 @@ import {
   getDashboard,
   getUser,
   listAdminEvaluations,
+  listComparables,
   listUsers,
   updateUserStatus,
 } from '../services/admin.service';
-import type { AdminEvaluationQuery, AdminListQuery } from '../validators/admin.schema';
+import type {
+  AdminComparablesQuery,
+  AdminEvaluationQuery,
+  AdminListQuery,
+} from '../validators/admin.schema';
 import type { AccountStatus } from '../types/domain';
 
 function requireUser(req: Request) {
@@ -70,4 +75,14 @@ export const evaluations = asyncHandler(async (req: Request, res: Response) => {
 
 export const evaluation = asyncHandler(async (req: Request, res: Response) => {
   sendSuccess(res, 'Evaluation retrieved', await getAdminEvaluation(resourceId(req, 'evaluation id')));
+});
+
+export const comparables = asyncHandler(async (req: Request, res: Response) => {
+  const query = getValidatedQuery<AdminComparablesQuery>(req);
+  const result = await listComparables(query);
+  sendSuccess(res, 'Comparables retrieved', result.items, 200, {
+    page: query.page,
+    limit: query.limit,
+    total: result.total,
+  });
 });

@@ -4,6 +4,7 @@ import { requireAdmin } from '../middleware/admin.middleware';
 import { validateBody, validateQuery } from '../middleware/validation.middleware';
 import {
   analytics,
+  comparables,
   dashboard,
   evaluation,
   evaluations,
@@ -15,6 +16,7 @@ import {
   accountStatusSchema,
 } from '../validators/ai-response.schema';
 import {
+  adminComparablesQuerySchema,
   adminEvaluationQuerySchema,
   adminListQuerySchema,
   analyticsQuerySchema,
@@ -30,3 +32,4 @@ adminRouter.get('/users/:id', user);
 adminRouter.patch('/users/:id/status', validateBody(accountStatusSchema), userStatus);
 adminRouter.get('/evaluations', validateQuery(adminEvaluationQuerySchema), evaluations);
 adminRouter.get('/evaluations/:id', evaluation);
+adminRouter.get('/comparables', validateQuery(adminComparablesQuerySchema), comparables);

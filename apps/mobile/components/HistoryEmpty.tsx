@@ -1,19 +1,14 @@
 import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
-import { palette } from '@/lib/theme';
+import { Text } from 'react-native-paper';
+import { PrimaryButton } from '@/components/PrimaryButton';
+import { fonts, palette, spacing } from '@/lib/theme';
 
 export function HistoryEmpty({ onEvaluate }: { onEvaluate?: () => void }) {
   return (
     <View style={styles.wrap}>
-      <Text variant="titleMedium" style={styles.title}>
-        No evaluations yet
-      </Text>
+      <Text style={styles.title}>No evaluations yet</Text>
       <Text style={styles.copy}>Submit a property to see an AI valuation and investment recommendation.</Text>
-      {onEvaluate ? (
-        <Button mode="contained" onPress={onEvaluate} style={styles.button}>
-          Evaluate a property
-        </Button>
-      ) : null}
+      {onEvaluate ? <PrimaryButton label="Evaluate a property" onPress={onEvaluate} /> : null}
     </View>
   );
 }
@@ -21,13 +16,12 @@ export function HistoryEmpty({ onEvaluate }: { onEvaluate?: () => void }) {
 const styles = StyleSheet.create({
   wrap: {
     backgroundColor: palette.card,
-    borderRadius: 16,
-    padding: 20,
-    gap: 8,
+    borderRadius: 22,
+    padding: spacing.lg,
+    gap: 10,
     borderWidth: 1,
     borderColor: palette.line,
   },
-  title: { color: palette.navy, fontWeight: '700' },
-  copy: { color: palette.muted, lineHeight: 20 },
-  button: { marginTop: 8, borderRadius: 12 },
+  title: { color: palette.navy, fontFamily: fonts.display, fontSize: 20 },
+  copy: { color: palette.muted, fontFamily: fonts.body, lineHeight: 21 },
 });

@@ -12,6 +12,7 @@ export const investmentRecommendations = [
 export const confidenceLevels = ['low', 'medium', 'high', 'insufficient_data'] as const;
 export const userRoles = ['user', 'admin'] as const;
 export const accountStatuses = ['active', 'inactive'] as const;
+export const verificationStatuses = ['unverified', 'verified', 'rejected'] as const;
 
 export type PropertyType = (typeof propertyTypes)[number];
 export type AreaUnit = (typeof areaUnits)[number];
@@ -22,6 +23,7 @@ export type InvestmentRecommendation = (typeof investmentRecommendations)[number
 export type ConfidenceLevel = (typeof confidenceLevels)[number];
 export type UserRole = (typeof userRoles)[number];
 export type AccountStatus = (typeof accountStatuses)[number];
+export type VerificationStatus = (typeof verificationStatuses)[number];
 
 export interface Profile {
   id: string;
@@ -121,6 +123,11 @@ export interface MarketComparable {
   currency: string;
   transaction_date: string;
   source: string;
+}
+
+export interface AdminMarketComparable extends MarketComparable {
+  verification_status: VerificationStatus;
+  created_at: string;
 }
 
 export interface PageMeta {

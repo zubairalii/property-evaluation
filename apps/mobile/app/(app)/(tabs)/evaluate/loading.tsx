@@ -2,10 +2,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Text } from 'react-native-paper';
+import { ActivityIndicator, Text } from 'react-native-paper';
+import { LinearGradient } from 'expo-linear-gradient';
+import { PrimaryButton } from '@/components/PrimaryButton';
 import { api, getErrorMessage } from '@/lib/api';
 import { queryClient } from '@/lib/query-client';
-import { palette } from '@/lib/theme';
+import { fonts, palette, spacing } from '@/lib/theme';
 import type { ApiEnvelope, EvaluationView } from '@/lib/types';
 
 export default function LoadingScreen() {
@@ -31,27 +33,34 @@ export default function LoadingScreen() {
 
   return (
     <View style={styles.screen}>
-      {mutation.isError ? (
-        <>
-          <Text style={styles.title}>Evaluation could not be completed</Text>
-          <Text style={styles.copy}>{getErrorMessage(mutation.error)}</Text>
-          <Button mode="contained" style={styles.button} onPress={() => mutation.mutate()}>
-            Try again
-          </Button>
-          <Button mode="text" onPress={() => router.replace('/(app)/(tabs)/history')}>
-            Back to history
-          </Button>
-        </>
-      ) : (
-        <>
-          <ActivityIndicator size="large" color={palette.blue} />
-          <Text style={styles.title}>Analyzing this property</Text>
-          <Text style={styles.copy}>
-            The server is checking verified market records and requesting a structured valuation. This can take a
-            moment.
-          </Text>
-        </>
-      )}
+      <LinearGradient colors={[palette.mist, palette.background, '#F8FBFD']} style={StyleSheet.absoluteFill} />
+      <View style={styles.card}>
+        {mutation.isError ? (
+          <>
+            <Text style={styles.title}>Evaluation could not be completed</Text>
+            <Text style={styles.copy}>{getErrorMessage(mutation.error)}</Text>
+            <PrimaryButton label="Try again" onPress={() => mutation.mutate()} />
+            <PrimaryButton
+              label="Back to history"
+              mode="outlined"
+              onPress={() => router.replace('/(app)/(tabs)/history')}
+            />
+          </>
+        ) : (
+          <>
+            <ActivityIndicator size="large" color={palette.teal} />
+            <Text style={styles.title}>Analyzing this property</Text>
+            <Text style={styles.copy}>
+              Matching local market records and preparing your valuation. This usually takes a few seconds.
+            </Text>
+            <PrimaryButton
+              label="Cancel to history"
+              mode="text"
+              onPress={() => router.replace('/(app)/(tabs)/history')}
+            />
+          </>
+        )}
+      </View>
     </View>
   );
 }
@@ -59,13 +68,30 @@ export default function LoadingScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: palette.background,
-    alignItems: 'center',
     justifyContent: 'center',
-    padding: 28,
-    gap: 12,
+    padding: spacing.xl,
   },
-  title: { color: palette.navy, fontSize: 24, fontWeight: '800', textAlign: 'center' },
-  copy: { color: palette.muted, textAlign: 'center', lineHeight: 22 },
-  button: { borderRadius: 12, backgroundColor: palette.navy, marginTop: 8 },
+  card: {
+    backgroundColor: palette.card,
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: palette.line,
+    padding: spacing.xl,
+    gap: spacing.md,
+    alignItems: 'center',
+  },
+  title: {
+    color: palette.navy,
+    fontFamily: fonts.displayBold,
+    fontSize: 26,
+    textAlign: 'center',
+    lineHeight: 32,
+  },
+  copy: {
+    color: palette.muted,
+    fontFamily: fonts.body,
+    textAlign: 'center',
+    lineHeight: 22,
+    fontSize: 15,
+  },
 });

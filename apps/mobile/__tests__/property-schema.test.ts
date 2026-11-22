@@ -21,6 +21,7 @@ describe('property submission', () => {
     const parsed = propertyFormSchema.parse(valid);
     const payload = toPropertyPayload(parsed);
     expect(payload.asking_price).toBe(45000000);
+    expect(payload.country).toBe('Pakistan');
     expect(payload.covered_area).toBeNull();
     expect(payload.bathrooms).toBeNull();
     expect(payload.bedrooms).toBe(4);

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { HelperText, Text, TextInput } from 'react-native-paper';
-import { palette } from '@/lib/theme';
+import { fonts, palette } from '@/lib/theme';
 
 interface Option {
   value: string;
@@ -33,6 +33,9 @@ export function SelectField({
           value={selected}
           editable={false}
           pointerEvents="none"
+          outlineColor={palette.line}
+          activeOutlineColor={palette.teal}
+          style={styles.input}
           right={<TextInput.Icon icon="chevron-down" />}
           error={Boolean(error)}
         />
@@ -45,6 +48,7 @@ export function SelectField({
             <FlatList
               data={options}
               keyExtractor={(item) => item.value}
+              ListEmptyComponent={<Text style={styles.empty}>No options available yet.</Text>}
               renderItem={({ item }) => (
                 <Pressable
                   style={styles.option}
@@ -53,7 +57,7 @@ export function SelectField({
                     setOpen(false);
                   }}
                 >
-                  <Text style={item.value === value ? styles.active : undefined}>{item.label}</Text>
+                  <Text style={item.value === value ? styles.active : styles.optionText}>{item.label}</Text>
                 </Pressable>
               )}
             />
@@ -65,19 +69,31 @@ export function SelectField({
 }
 
 const styles = StyleSheet.create({
+  input: { backgroundColor: palette.card },
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    backgroundColor: 'rgba(11, 31, 51, 0.45)',
     justifyContent: 'flex-end',
   },
   sheet: {
     maxHeight: '70%',
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 16,
+    backgroundColor: palette.card,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 18,
   },
-  title: { fontSize: 18, fontWeight: '700', color: palette.navy, marginBottom: 8 },
-  option: { paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: palette.line },
-  active: { color: palette.blue, fontWeight: '700' },
+  title: {
+    fontSize: 18,
+    fontFamily: fonts.display,
+    color: palette.navy,
+    marginBottom: 8,
+  },
+  option: {
+    paddingVertical: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: palette.line,
+  },
+  optionText: { color: palette.ink, fontFamily: fonts.body, fontSize: 16 },
+  active: { color: palette.teal, fontFamily: fonts.bodyBold, fontSize: 16 },
+  empty: { color: palette.muted, fontFamily: fonts.body, paddingVertical: 16 },
 });

@@ -101,3 +101,20 @@ export interface AdminUser extends Profile {
   evaluation_count: number;
   recent_evaluations: EvaluationSummary[];
 }
+
+export interface MarketComparable {
+  id: string;
+  property_type: string;
+  country: string;
+  city: string;
+  location: string;
+  property_size: number | string;
+  area_unit: string;
+  covered_area: number | string | null;
+  sale_price: number | string;
+  currency: string;
+  transaction_date: string;
+  source: string;
+  verification_status: 'unverified' | 'verified' | 'rejected';
+  created_at: string;
+}

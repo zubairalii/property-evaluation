@@ -1,12 +1,11 @@
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { AuthForm } from '@/components/AuthForm';
-import { Screen } from '@/components/Screen';
-import { getErrorMessage } from '@/lib/api';
+import { Screen, ScreenHeader } from '@/components/Screen';
 import { supabase } from '@/lib/supabase';
-import { palette } from '@/lib/theme';
+import { fonts, palette } from '@/lib/theme';
 import { loginSchema, type LoginValues } from '@/lib/validation/auth';
 
 export default function LoginScreen() {
@@ -20,11 +19,11 @@ export default function LoginScreen() {
 
   return (
     <Screen>
-      <View style={styles.hero}>
-        <Text style={styles.brand}>Smart Property Evaluator</Text>
-        <Text style={styles.title}>Welcome back</Text>
-        <Text style={styles.copy}>Sign in to evaluate a property or review your history.</Text>
-      </View>
+      <ScreenHeader
+        eyebrow="Smart Property Evaluator"
+        title="Welcome back"
+        subtitle="Sign in to evaluate a property or review your history."
+      />
       {message ? <Text style={styles.error}>{message}</Text> : null}
       <AuthForm
         schema={loginSchema}
@@ -47,10 +46,6 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  hero: { gap: 6, marginBottom: 8 },
-  brand: { color: palette.blue, fontWeight: '700' },
-  title: { color: palette.navy, fontSize: 32, fontWeight: '800' },
-  copy: { color: palette.muted, lineHeight: 22 },
-  error: { color: palette.danger },
-  link: { color: palette.blue, fontWeight: '600', marginTop: 8 },
+  error: { color: palette.danger, fontFamily: fonts.bodyMedium },
+  link: { color: palette.teal, fontFamily: fonts.bodyBold, marginTop: 8 },
 });

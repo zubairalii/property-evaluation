@@ -1,10 +1,22 @@
 import { z } from 'zod';
 import { logger } from '../config/logger';
 import { supabaseAdmin } from '../config/supabase';
-import type { AccountStatus, EvaluationView, Profile } from '../types/domain';
+import type { AccountStatus, AdminMarketComparable, EvaluationView, Profile } from '../types/domain';
 import { HttpError } from '../utils/http-error';
-import { embeddedResult, parseEvaluation, parseProfile, throwIfDbError, toSummary } from '../utils/rows';
-import { sanitizeSearch, type AdminEvaluationQuery, type AdminListQuery } from '../validators/admin.schema';
+import {
+  embeddedResult,
+  parseAdminComparable,
+  parseEvaluation,
+  parseProfile,
+  throwIfDbError,
+  toSummary,
+} from '../utils/rows';
+import {
+  sanitizeSearch,
+  type AdminComparablesQuery,
+  type AdminEvaluationQuery,
+  type AdminListQuery,
+} from '../validators/admin.schema';
 import { toEvaluationView } from './investment.service';
 
 function range(page: number, limit: number): { from: number; to: number } {
@@ -258,5 +270,39 @@ export async function getAdminEvaluation(evaluationId: string): Promise<Evaluati
   return {
     ...view,
     user: profile ? { full_name: String(profile.full_name), email: String(profile.email) } : null,
+  };
+}
+
+export async function listComparables(
+  filters: AdminComparablesQuery,
+): Promise<{ items: AdminMarketComparable[]; total: number }> {
+  const { from, to } = range(filters.page, filters.limit);
+  let query = supabaseAdmin
+    .from('market_comparables')
+    .select(
+      'id, property_type, country, city, location, property_size, area_unit, covered_area, sale_price, currency, transaction_date, source, verification_status, created_at',
+      { count: 'exact' },
+    )
+    .order('transaction_date', { ascending: false })
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  if (filters.property_type) query = query.eq('property_type', filters.property_type);
+  if (filters.verification_status) query = query.eq('verification_status', filters.verification_status);
+  if (filters.city) {
+    const safeCity = sanitizeSearch(filters.city);
+    if (safeCity) query = query.ilike('city', safeCity);
+  }
+  if (filters.location) {
+    const safeLocation = sanitizeSearch(filters.location);
+    if (safeLocation) query = query.ilike('location', `%${safeLocation}%`);
+  }
+
+  const { data, error, count } = await query;
+  throwIfDbError(error, 'Failed to load market comparables');
+
+  return {
+    items: (data ?? []).map((row) => parseAdminComparable(row)),
+    total: count ?? 0,
   };
 }

@@ -3,10 +3,10 @@ import { useRouter } from 'expo-router';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { HistoryEmpty } from '@/components/HistoryEmpty';
-import { Screen } from '@/components/Screen';
+import { Screen, ScreenHeader } from '@/components/Screen';
 import { api, getErrorMessage } from '@/lib/api';
 import { formatDate, formatMoney, propertyHeading, recommendationLabels, statusLabels } from '@/lib/labels';
-import { palette } from '@/lib/theme';
+import { fonts, palette, spacing } from '@/lib/theme';
 import type { ApiEnvelope, EvaluationSummary } from '@/lib/types';
 
 export default function HistoryScreen() {
@@ -41,8 +41,12 @@ export default function HistoryScreen() {
 
   return (
     <Screen>
-      <Text style={styles.title}>Evaluation history</Text>
-      {query.isLoading ? <Text>Loading your evaluations…</Text> : null}
+      <ScreenHeader
+        eyebrow="Archive"
+        title="Evaluation history"
+        subtitle="Revisit past valuations or clean up properties you no longer need."
+      />
+      {query.isLoading ? <Text style={styles.meta}>Loading your evaluations…</Text> : null}
       {query.isError ? <Text style={styles.error}>{getErrorMessage(query.error)}</Text> : null}
       {remove.isError ? <Text style={styles.error}>{getErrorMessage(remove.error)}</Text> : null}
       {!query.isLoading && items.length === 0 ? (
@@ -52,7 +56,7 @@ export default function HistoryScreen() {
         <Pressable key={item.id} style={styles.card} onPress={() => router.push(`/(app)/evaluations/${item.id}`)}>
           <View style={styles.row}>
             <Text style={styles.cardTitle}>{propertyHeading(item.property_title, item.property_type, item.city)}</Text>
-            <Pressable onPress={() => confirmDelete(item.id)}>
+            <Pressable onPress={() => confirmDelete(item.id)} hitSlop={8}>
               <Text style={styles.delete}>Delete</Text>
             </Pressable>
           </View>
@@ -71,19 +75,18 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { color: palette.navy, fontSize: 28, fontWeight: '800' },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
+    backgroundColor: palette.card,
+    borderRadius: 20,
+    padding: spacing.md,
     gap: 4,
     borderWidth: 1,
     borderColor: palette.line,
   },
   row: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
-  cardTitle: { color: palette.navy, fontWeight: '700', fontSize: 16, flex: 1 },
-  meta: { color: palette.muted },
-  price: { color: '#0F172A', fontWeight: '600', marginTop: 4 },
-  delete: { color: palette.danger, fontWeight: '700' },
-  error: { color: palette.danger },
+  cardTitle: { color: palette.navy, fontFamily: fonts.bodyBold, fontSize: 16, flex: 1 },
+  meta: { color: palette.muted, fontFamily: fonts.body },
+  price: { color: palette.ink, fontFamily: fonts.bodyMedium, marginTop: 4 },
+  delete: { color: palette.danger, fontFamily: fonts.bodyBold },
+  error: { color: palette.danger, fontFamily: fonts.bodyMedium },
 });
