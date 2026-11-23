@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { AuthForm } from '@/components/AuthForm';
-import { Screen, ScreenHeader } from '@/components/Screen';
+import { AuthPanel, Screen, ScreenHeader } from '@/components/Screen';
 import { supabase } from '@/lib/supabase';
 import { fonts, palette } from '@/lib/theme';
 import { registerSchema, type RegisterValues } from '@/lib/validation/auth';
@@ -28,38 +28,40 @@ export default function RegisterScreen() {
   }
 
   return (
-    <Screen>
-      <ScreenHeader
-        eyebrow="Get started"
-        title="Create your account"
-        subtitle="Use the same account to view evaluations on this device."
-      />
-      {message ? <Text style={styles.note}>{message}</Text> : null}
-      <AuthForm
-        schema={registerSchema}
-        defaults={{ full_name: '', email: '', password: '', confirm_password: '' }}
-        submitLabel="Create account"
-        onSubmit={onSubmit}
-        fields={[
-          { name: 'full_name', label: 'Full name' },
-          { name: 'email', label: 'Email', keyboard: 'email-address' },
-          {
-            name: 'password',
-            label: 'Password',
-            secure: true,
-            hint: '8+ characters with upper, lower, number, and a special character.',
-          },
-          { name: 'confirm_password', label: 'Confirm password', secure: true },
-        ]}
-      />
-      <Link href="/(auth)/login" style={styles.link}>
-        Already have an account? Sign in
-      </Link>
+    <Screen centered>
+      <AuthPanel>
+        <ScreenHeader
+          eyebrow="Get started"
+          title="Create your account"
+          subtitle="Use the same account to view evaluations on this device."
+        />
+        {message ? <Text style={styles.note}>{message}</Text> : null}
+        <AuthForm
+          schema={registerSchema}
+          defaults={{ full_name: '', email: '', password: '', confirm_password: '' }}
+          submitLabel="Create account"
+          onSubmit={onSubmit}
+          fields={[
+            { name: 'full_name', label: 'Full name' },
+            { name: 'email', label: 'Email', keyboard: 'email-address' },
+            {
+              name: 'password',
+              label: 'Password',
+              secure: true,
+              hint: '8+ characters with upper, lower, number, and a special character.',
+            },
+            { name: 'confirm_password', label: 'Confirm password', secure: true },
+          ]}
+        />
+        <Link href="/(auth)/login" style={styles.link}>
+          Already have an account? Sign in
+        </Link>
+      </AuthPanel>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   note: { color: palette.navy, fontFamily: fonts.bodyMedium, lineHeight: 21 },
-  link: { color: palette.teal, fontFamily: fonts.bodyBold, marginTop: 8 },
+  link: { color: palette.teal, fontFamily: fonts.bodyBold, marginTop: 4 },
 });

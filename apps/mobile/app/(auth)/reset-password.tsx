@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { AuthForm } from '@/components/AuthForm';
-import { Screen, ScreenHeader } from '@/components/Screen';
+import { AuthPanel, Screen, ScreenHeader } from '@/components/Screen';
 import { useAuth } from '@/context/auth';
 import { supabase } from '@/lib/supabase';
 import { fonts, palette } from '@/lib/theme';
@@ -26,24 +26,26 @@ export default function ResetPasswordScreen() {
   }
 
   return (
-    <Screen>
-      <ScreenHeader eyebrow="Account recovery" title="Choose a new password" />
-      {message ? <Text style={styles.note}>{message}</Text> : null}
-      <AuthForm
-        schema={resetSchema}
-        defaults={{ password: '', confirm_password: '' }}
-        submitLabel="Update password"
-        onSubmit={onSubmit}
-        fields={[
-          {
-            name: 'password',
-            label: 'New password',
-            secure: true,
-            hint: '8+ characters with upper, lower, number, and a special character.',
-          },
-          { name: 'confirm_password', label: 'Confirm password', secure: true },
-        ]}
-      />
+    <Screen centered>
+      <AuthPanel>
+        <ScreenHeader eyebrow="Account recovery" title="Choose a new password" />
+        {message ? <Text style={styles.note}>{message}</Text> : null}
+        <AuthForm
+          schema={resetSchema}
+          defaults={{ password: '', confirm_password: '' }}
+          submitLabel="Update password"
+          onSubmit={onSubmit}
+          fields={[
+            {
+              name: 'password',
+              label: 'New password',
+              secure: true,
+              hint: '8+ characters with upper, lower, number, and a special character.',
+            },
+            { name: 'confirm_password', label: 'Confirm password', secure: true },
+          ]}
+        />
+      </AuthPanel>
     </Screen>
   );
 }

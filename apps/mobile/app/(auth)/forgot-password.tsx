@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { AuthForm } from '@/components/AuthForm';
-import { Screen, ScreenHeader } from '@/components/Screen';
+import { AuthPanel, Screen, ScreenHeader } from '@/components/Screen';
 import { supabase } from '@/lib/supabase';
 import { fonts, palette } from '@/lib/theme';
 import { forgotSchema, type ForgotValues } from '@/lib/validation/auth';
@@ -27,23 +27,25 @@ export default function ForgotPasswordScreen() {
   }
 
   return (
-    <Screen>
-      <ScreenHeader
-        eyebrow="Account recovery"
-        title="Reset your password"
-        subtitle="Enter your email and we’ll send a verification code you can use in the app."
-      />
-      {message ? <Text style={styles.note}>{message}</Text> : null}
-      <AuthForm
-        schema={forgotSchema}
-        defaults={{ email: '' }}
-        submitLabel="Send verification code"
-        onSubmit={onSubmit}
-        fields={[{ name: 'email', label: 'Email', keyboard: 'email-address' }]}
-      />
-      <Link href="/(auth)/login" style={styles.link}>
-        Back to sign in
-      </Link>
+    <Screen centered>
+      <AuthPanel>
+        <ScreenHeader
+          eyebrow="Account recovery"
+          title="Reset your password"
+          subtitle="Enter your email and we’ll send a verification code you can use in the app."
+        />
+        {message ? <Text style={styles.note}>{message}</Text> : null}
+        <AuthForm
+          schema={forgotSchema}
+          defaults={{ email: '' }}
+          submitLabel="Send verification code"
+          onSubmit={onSubmit}
+          fields={[{ name: 'email', label: 'Email', keyboard: 'email-address' }]}
+        />
+        <Link href="/(auth)/login" style={styles.link}>
+          Back to sign in
+        </Link>
+      </AuthPanel>
     </Screen>
   );
 }

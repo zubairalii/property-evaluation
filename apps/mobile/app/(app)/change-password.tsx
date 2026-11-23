@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { AuthForm } from '@/components/AuthForm';
-import { Screen } from '@/components/Screen';
+import { AuthPanel, Screen } from '@/components/Screen';
 import { useAuth } from '@/context/auth';
 import { supabase } from '@/lib/supabase';
 import { fonts, palette } from '@/lib/theme';
@@ -41,25 +41,27 @@ export default function ChangePasswordScreen() {
   }
 
   return (
-    <Screen>
-      <Text style={styles.subtitle}>Confirm your current password, then choose a new one.</Text>
-      {message ? <Text style={styles.note}>{message}</Text> : null}
-      <AuthForm
-        schema={changePasswordSchema}
-        defaults={{ current_password: '', password: '', confirm_password: '' }}
-        submitLabel="Update password"
-        onSubmit={onSubmit}
-        fields={[
-          { name: 'current_password', label: 'Current password', secure: true },
-          {
-            name: 'password',
-            label: 'New password',
-            secure: true,
-            hint: '8+ characters with upper, lower, number, and a special character.',
-          },
-          { name: 'confirm_password', label: 'Confirm new password', secure: true },
-        ]}
-      />
+    <Screen centered>
+      <AuthPanel>
+        <Text style={styles.subtitle}>Confirm your current password, then choose a new one.</Text>
+        {message ? <Text style={styles.note}>{message}</Text> : null}
+        <AuthForm
+          schema={changePasswordSchema}
+          defaults={{ current_password: '', password: '', confirm_password: '' }}
+          submitLabel="Update password"
+          onSubmit={onSubmit}
+          fields={[
+            { name: 'current_password', label: 'Current password', secure: true },
+            {
+              name: 'password',
+              label: 'New password',
+              secure: true,
+              hint: '8+ characters with upper, lower, number, and a special character.',
+            },
+            { name: 'confirm_password', label: 'Confirm new password', secure: true },
+          ]}
+        />
+      </AuthPanel>
     </Screen>
   );
 }

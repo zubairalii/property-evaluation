@@ -56,7 +56,7 @@ export default function VerifyRecoveryScreen() {
   }
 
   return (
-    <Screen>
+    <Screen centered>
       <ScreenHeader
         eyebrow="Account recovery"
         title="Enter verification code"

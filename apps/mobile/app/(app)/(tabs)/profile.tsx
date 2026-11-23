@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { HelperText, Text, TextInput } from 'react-native-paper';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { Screen, ScreenHeader, SectionTitle } from '@/components/Screen';
@@ -90,7 +90,10 @@ export default function ProfileScreen() {
         mode="outlined"
         onPress={() => router.push('/(app)/change-password')}
       />
-      <PrimaryButton label="Log out" mode="text" tone="danger" onPress={() => signOut()} />
+      <View style={styles.spacer} />
+      <View style={styles.logout}>
+        <PrimaryButton label="Log out" mode="outlined" tone="danger" onPress={() => signOut()} />
+      </View>
     </Screen>
   );
 }
@@ -98,4 +101,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   input: { backgroundColor: palette.card },
   note: { color: palette.navy, fontFamily: fonts.bodyMedium },
+  spacer: { flexGrow: 1, minHeight: 48 },
+  logout: { marginTop: 12, marginBottom: 8 },
 });

@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import {
   ScrollView,
   StyleSheet,
+  useWindowDimensions,
   View,
   type ScrollViewProps,
   type StyleProp,
@@ -15,17 +16,21 @@ export function Screen({
   children,
   scroll = true,
   padded = true,
+  centered = false,
   style,
   ...rest
 }: {
   children: React.ReactNode;
   scroll?: boolean;
   padded?: boolean;
+  /** Vertically balance short screens (login / register) instead of pinning to the top. */
+  centered?: boolean;
   style?: StyleProp<ViewStyle>;
 } & ScrollViewProps) {
   const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
   const pad = {
-    paddingTop: Math.max(insets.top, spacing.md) + spacing.lg,
+    paddingTop: centered ? Math.max(insets.top, spacing.sm) + spacing.md : Math.max(insets.top, spacing.md) + spacing.lg,
     paddingHorizontal: padded ? spacing.lg : 0,
     paddingBottom: Math.max(insets.bottom, spacing.md) + spacing.xxl,
   };
@@ -35,7 +40,13 @@ export function Screen({
       <LinearGradient colors={[palette.mist, palette.background, '#F8FBFD']} style={StyleSheet.absoluteFill} />
       {scroll ? (
         <ScrollView
-          contentContainerStyle={[styles.content, pad, style]}
+          contentContainerStyle={[
+            styles.content,
+            centered && styles.centered,
+            centered && { minHeight: height - insets.top - insets.bottom },
+            pad,
+            style,
+          ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           {...rest}
@@ -43,10 +54,14 @@ export function Screen({
           {children}
         </ScrollView>
       ) : (
-        <View style={[styles.fill, pad, style]}>{children}</View>
+        <View style={[styles.fill, centered && styles.centered, pad, style]}>{children}</View>
       )}
     </View>
   );
+}
+
+export function AuthPanel({ children }: { children: React.ReactNode }) {
+  return <View style={styles.panel}>{children}</View>;
 }
 
 export function SectionTitle({ children }: { children: string }) {
@@ -75,6 +90,22 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: palette.background },
   fill: { flex: 1 },
   content: { gap: spacing.md, flexGrow: 1 },
+  centered: {
+    justifyContent: 'center',
+  },
+  panel: {
+    gap: spacing.md,
+    borderRadius: 28,
+    backgroundColor: palette.card,
+    borderWidth: 1,
+    borderColor: palette.line,
+    padding: spacing.lg,
+    shadowColor: palette.navy,
+    shadowOpacity: 0.06,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 2,
+  },
   header: { gap: 8, marginBottom: spacing.sm },
   eyebrow: {
     color: palette.teal,

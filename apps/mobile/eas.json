@@ -9,7 +9,9 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://168.231.74.154:3036"
+        "EXPO_PUBLIC_API_URL": "http://168.231.74.154:3036",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://cowujghyocuosbxrqtck.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_9wRthORf5KAcHa3UXmtetA_qfN3LkH2"
       }
     },
     "production": {
@@ -17,7 +19,9 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://168.231.74.154:3036"
+        "EXPO_PUBLIC_API_URL": "http://168.231.74.154:3036",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://cowujghyocuosbxrqtck.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_9wRthORf5KAcHa3UXmtetA_qfN3LkH2"
       }
     }
   }

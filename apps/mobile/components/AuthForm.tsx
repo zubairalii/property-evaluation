@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HelperText, TextInput } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import type { ZodTypeAny } from 'zod';
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { palette } from '@/lib/theme';
 
 export function Field({
   label,
@@ -24,6 +26,8 @@ export function Field({
   secure?: boolean;
   keyboard?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
 }) {
+  const [visible, setVisible] = useState(false);
+
   return (
     <View>
       <TextInput
@@ -32,11 +36,25 @@ export function Field({
         value={value}
         onChangeText={onChange}
         onBlur={onBlur}
-        secureTextEntry={secure}
+        secureTextEntry={secure && !visible}
         keyboardType={keyboard}
         autoCapitalize={keyboard === 'email-address' || keyboard === 'numeric' ? 'none' : 'sentences'}
         autoCorrect={false}
         error={Boolean(error)}
+        outlineColor={palette.line}
+        activeOutlineColor={palette.teal}
+        style={styles.input}
+        right={
+          secure ? (
+            <TextInput.Icon
+              icon={visible ? 'eye-off-outline' : 'eye-outline'}
+              color={palette.muted}
+              onPress={() => setVisible((current) => !current)}
+              forceTextInputFocus={false}
+              accessibilityLabel={visible ? 'Hide password' : 'Show password'}
+            />
+          ) : undefined
+        }
       />
       {error ? <HelperText type="error">{error}</HelperText> : null}
       {!error && hint ? <HelperText type="info">{hint}</HelperText> : null}
@@ -101,5 +119,6 @@ export function AuthForm({
 }
 
 const styles = StyleSheet.create({
-  form: { gap: 8 },
+  form: { gap: 12 },
+  input: { backgroundColor: palette.card },
 });

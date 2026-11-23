@@ -2,7 +2,7 @@
   "expo": {
     "name": "Smart Property Evaluator",
     "slug": "smart-property-evaluator",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "smartpropertyevaluator",
@@ -12,7 +12,7 @@
     },
     "android": {
       "package": "com.smartpropertyevaluator.app",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "backgroundColor": "#0B1F33",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -38,10 +38,29 @@
         }
       ],
       "expo-secure-store",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "8fdf42d4-49f2-431e-8a5b-a28034eb5c84"
+      }
+    },
+    "owner": "zubair.orbics"
   }
 }
